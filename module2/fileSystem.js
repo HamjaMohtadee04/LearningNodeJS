@@ -2,25 +2,46 @@
 //1.file read / I/O intensive task->single thread -> not go to thread pool.
 
 
-const fs =require("fs")
-console.log("task1");
-const text = "learning file system"
+// const fs =require("fs")
+// console.log("task1");
+// const text = "learning file system"
 
-//write file sync
-fs.writeFileSync("./hello.txt",text)
+// //write file sync
+// fs.writeFileSync("./hello.txt",text)
 
-console.log("task2");
+// console.log("task2");
 
-//reading from a file
-const data = fs.readFileSync("./hello.txt",{encoding:"utf-8"})
-console.log("task3");
-console.log(data);
-
-
-
-
-
+// //reading from a file
+// const data = fs.readFileSync("./hello.txt",{encoding:"utf-8"})
+// console.log("task3");
+// console.log(data);
 
 
 //asynchronous way
 // file read -> single thread -> event loop -> thread pool -> task complete.
+
+
+const fs = require('fs');
+
+console.log("task1");
+
+let text;
+fs.readFile('./hello.txt', {encoding:"utf-8"}, (err, data) => {
+  if (err) {
+    console.error('something went wrong:', err);
+    return;
+  }
+  text =data
+  console.log(data,"inside readfile callback");
+});
+
+// console.log(text);
+// console.log("task2");
+fs.writeFile("./hello.txt",text,{encoding:"utf-8"},(err,data)=>
+{
+  if (err) {
+    console.error('something went wrong:', err);
+    return;
+  }
+  console.log("return successfully");
+})            
