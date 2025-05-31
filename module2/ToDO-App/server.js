@@ -56,9 +56,34 @@ const stringifiedTodo = JSON.stringify(todo)
             "content-type":"application/json",
         })
         res.end(stringifiedTodo)
-        res.end("single todo")
     }
     
+    //UPDATE TODO
+else if(pathname ==="/todos/update-todo" && req.method ==='PATCH'){
+    const title = url.searchParams.get("title")
+        let data =""
+        req.on("data",(chunk)=>{
+            data =data + chunk
+        })
+
+        req.on("end",()=>{
+            const {body} =JSON.parse(data)
+
+            const allTodos = fs.readFileSync(filePath,{encoding:"utf-8"})
+            const parsedAlltodos = JSON.parse(allTodos)
+            
+         const todoIndex = parsedAlltodos.findIndex((todo)=>todo.title === title)
+            parsedAlltodos[todoIndex].body = body
+
+
+
+             fs.writeFileSync(filePath,JSON.stringify(parsedAlltodos,null,2),{encoding:'utf-8'})
+              res.end(JSON.stringify(
+                {title,body,createdAt: parsedAlltodos[todoIndex].createdAt},null,2
+              ))
+        })
+ }
+
     else{
         res.end("route not found")
     }
