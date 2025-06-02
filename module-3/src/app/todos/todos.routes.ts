@@ -2,8 +2,9 @@ import express,{Application, Request, Response} from "express"
 import fs from "fs"
 import path from "path"
 import { client } from "../../config/mongoDB"
+import { ObjectId } from "mongodb"
 export const TodosRouter = express.Router()
-const filePath = path.join(__dirname,"../../../db/todo.json")
+
 
 TodosRouter.get("/",async (req :Request , res: Response) => {
    const db = await client.db("todosDB")
@@ -36,21 +37,38 @@ const {title,description,priority} = req.body
   res.json(todos)
 })
 
-TodosRouter.get("/:title",(req :Request , res: Response) => {
-    const {title,body} = req.body
-    console.log(title,body);
-  res.send('Hello World!')
+TodosRouter.get("/:id",async(req :Request , res: Response) => {
+  const id = req.params.id
+ const db = await client.db("todosDB")
+  const collection = await db.collection("todos")
+
+  const todo = await collection.findOne({_id: new ObjectId(id)})
+  res.json(todo)
 })
 
-TodosRouter.put("/update-todo/:title",(req :Request , res: Response) => {
-    const {title,body} = req.body
-    console.log(title,body);
-  res.send('Hello World!')
+TodosRouter.put("/update-todo/:id",async(req :Request , res: Response) => {
+     const id = req.params.id
+ const db = await client.db("todosDB")
+ const collection = await db.collection("todos")
+ const {title,description,priority,isCompleted} = req.body
+ const filter = {_id: new ObjectId(id)}
+  
+ const updatedTodo =await collection.updateOne(
+  filter,
+  {$set:{title,description,priority,isCompleted}},
+  {upsert:true}
+)
+  res.json(updatedTodo)
 })
 
-TodosRouter.delete("/delete-todo/:title",(req :Request , res: Response) => {
-    const {title,body} = req.body
-    console.log(title,body);
-  res.send('Hello World!')
+TodosRouter.delete("/delete-todo/:id",async(req :Request , res: Response) => {
+    const id = req.params.id
+ const db = await client.db("todosDB")
+  const collection = await db.collection("todos") 
+
+ await collection.deleteOne({_id: new ObjectId(id)})
+  res.json({
+    message:"deleted successfully"
+  })
 })
 
