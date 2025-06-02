@@ -14,7 +14,9 @@ app.get('/', (req, res) => {
     res.send('welcome to todos app');
 });
 // all todo
-app.get('/todos', (req, res) => {
+app.get('/todos/:title/:body', (req, res) => {
+    console.log("from query", req.query);
+    console.log("from params", req.params);
     const data = fs_1.default.readFileSync(filePath, { encoding: "utf-8" });
     res.json(data);
 });
