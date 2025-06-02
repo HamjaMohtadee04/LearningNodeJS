@@ -1,4 +1,4 @@
- import express, { Application, Request, Response } from 'express'
+ import express, { Application, NextFunction, Request, Response } from 'express'
 import { TodosRouter } from './todos/todos.routes'
 
 
@@ -14,8 +14,12 @@ app.use("/todos",TodosRouter)
 app.use("/users",userRouter)
 
 
-app.get('/', (req :Request , res: Response) => {
-//   console.log(req.);
+app.get('/', (req :Request , res: Response,next: NextFunction) => {
+  // res.send('welcome to todos app')
+  console.log('i am custom middlewear');
+  next()
+},
+(req :Request , res: Response) => {
   res.send('welcome to todos app')
 })
 

@@ -10,8 +10,11 @@ app.use(express_1.default.json());
 const userRouter = express_1.default.Router();
 app.use("/todos", todos_routes_1.TodosRouter);
 app.use("/users", userRouter);
-app.get('/', (req, res) => {
-    //   console.log(req.);
+app.get('/', (req, res, next) => {
+    // res.send('welcome to todos app')
+    console.log('i am custom middlewear');
+    next();
+}, (req, res) => {
     res.send('welcome to todos app');
 });
 exports.default = app;
